@@ -4,6 +4,7 @@ import com.cloudspend.cloudspendservice.service.UserService;
 import com.cloudspend.dao.entity.ExpensifyUsers;
 import com.cloudspend.dao.entity.VendorDetails;
 import com.cloudspend.dao.repository.ExpensifyUsersRepository;
+import com.cloudspend.dao.repository.VendorDetailsRepository;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,20 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Override
     public List<VendorDetails> fetchVendorDetails(String partnerUserID, String partnerUserSecret) {
-        return null;
+        auth(partnerUserID,partnerUserSecret);
+        return vendorDetailsRepository.findByPartnerUserID(partnerUserID);
     }
 
+    @Override
+    public void auth(String partnerUserID, String partnerUserSecret){
+        Optional<ExpensifyUsers> usersOptional = expensifyUsersRepository.findByPartnerUserIDAndPartnerUserSecret(partnerUserID,partnerUserSecret);
+        Preconditions.checkArgument(usersOptional.isPresent(), "Invalid cred");
+
+    }
     @Autowired
     ExpensifyUsersRepository expensifyUsersRepository;
+    @Autowired
+    VendorDetailsRepository vendorDetailsRepository;
     @Override
     public ExpensifyUsers addUser(String partnerUserID, String partnerUserSecret) {
         Optional<ExpensifyUsers> usersOptional = expensifyUsersRepository.findByPartnerUserID(partnerUserID);
@@ -35,6 +45,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ExpensifyUsers updatePassword(String partnerUserID, String partnerUserSecret) {
-        return null;
+        auth(partnerUserID,partnerUserSecret);
+        Optional<ExpensifyUsers> usersOptional = expensifyUsersRepository.findByPartnerUserIDAndPartnerUserSecret(partnerUserID,partnerUserSecret);
+        ExpensifyUsers user = usersOptional.get();
+        user.setPartnerUserSecret(partnerUserSecret);
+        return expensifyUsersRepository.save(user);
     }
 }

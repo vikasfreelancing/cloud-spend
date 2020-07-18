@@ -9,4 +9,5 @@ public interface UserService {
     List<VendorDetails> fetchVendorDetails(String partnerUserID, String partnerUserSecret);
     ExpensifyUsers addUser(String partnerUserID,String partnerUserSecret);
     ExpensifyUsers updatePassword(String partnerUserID,String partnerUserSecret);
+    void auth(String partnerUserID, String partnerUserSecret);
 }

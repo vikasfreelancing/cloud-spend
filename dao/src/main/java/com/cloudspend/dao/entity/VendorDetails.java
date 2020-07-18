@@ -6,8 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.Id;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
+import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -18,7 +17,7 @@ public class VendorDetails {
     private String partnerUserID;
     private String vendorName;
     private BigDecimal amount;
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
     private String reportId;
     private String receiptID;
     private String receiptFilename;

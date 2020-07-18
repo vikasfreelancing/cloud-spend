@@ -32,12 +32,12 @@ public class UserController {
     }
     @PostMapping("/update")
     public ExpensifyUsers updateUser(@RequestBody ExpensifyUsers user){
-        log.info("add user request : {}",user);
+        log.info("update user request : {}",user);
         return userService.updatePassword(user.getPartnerUserID(),user.getPartnerUserSecret());
     }
     @PostMapping("/details")
     public List<VendorDetails> vendorDetails(@RequestBody ExpensifyUsers user){
-        log.info("add user request : {}",user);
+        log.info("fetch details request : {}",user);
         return userService.fetchVendorDetails(user.getPartnerUserID(),user.getPartnerUserSecret());
     }
 }

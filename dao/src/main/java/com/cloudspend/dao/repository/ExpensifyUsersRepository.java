@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ExpensifyUsersRepository extends MongoRepository<ExpensifyUsers,String> {
    Optional<ExpensifyUsers> findByPartnerUserID(String partnerUserID);
+
+   Optional<ExpensifyUsers> findByPartnerUserIDAndPartnerUserSecret(String partnerUserID,String partnerUserSecret);
 }

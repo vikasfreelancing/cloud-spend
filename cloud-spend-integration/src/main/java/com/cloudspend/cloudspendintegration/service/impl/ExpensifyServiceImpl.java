@@ -4,6 +4,8 @@ import com.cloudspend.cloudspendintegration.config.IntegrationConfig;
 import com.cloudspend.cloudspendintegration.service.ExpensifyService;
 import com.cloudspend.cloudspendintegration.vo.DownloadReportJobDiscriptionVO;
 import com.cloudspend.cloudspendintegration.vo.RequestJobDescriptionVO;
+import com.cloudspend.dao.entity.VendorDetails;
+import com.cloudspend.dao.repository.VendorDetailsRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.opencsv.CSVReader;
@@ -27,6 +29,10 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,18 +67,10 @@ public class ExpensifyServiceImpl implements ExpensifyService {
         LOGGER.info(response);
         return response.getBody();
     }
-    private List<String> readCSVFile(InputStream inputStream) throws IOException {
+    private List<String[]> readCSVFile(InputStream inputStream) throws IOException {
         CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream));
         List<String[]> records = csvReader.readAll();
-        List<String> values = new ArrayList<>();
-        records.forEach(record->{
-            System.out.println(record.length);
-            for(int i =0 ;i<record.length;i++){
-                System.out.print(record[i] +" ");
-            }
-            System.out.println();
-        });
-        return values;
+        return records;
     }
     @Override
     public String downloadReport(String fileName, String partnerUserID, String partnerUserSecret) throws IOException {
@@ -86,8 +84,10 @@ public class ExpensifyServiceImpl implements ExpensifyService {
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, httpHeaders);
         ResponseEntity<Resource> response = restTemplate.exchange(url, HttpMethod.POST, entity, Resource.class);
         LOGGER.info("response-->{}", response.getBody().getInputStream().toString());
-        readCSVFile(response.getBody().getInputStream());
-        return null;
+        List<String[]> records = readCSVFile(response.getBody().getInputStream());
+        List<VendorDetails> vendorDetailsList = generateAndSaveVendorDetails(records,partnerUserID);
+        LOGGER.info("Success fully fetched data from Expensify : {}",vendorDetailsList);
+        return "SUCCESS";
     }
 
     private DownloadReportJobDiscriptionVO createDownloadJobDescription(String partnerUserID, String partnerUserSecret, String fileName) {
@@ -120,5 +120,32 @@ public class ExpensifyServiceImpl implements ExpensifyService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         return headers;
     }
+
+    @Autowired
+    VendorDetailsRepository vendorDetailsRepository;
+    private List<VendorDetails> generateAndSaveVendorDetails(List<String[]> records, String partnerUserID){
+        List<VendorDetails> vendorDetailsList = new ArrayList<>();
+        records.forEach(record->{
+            VendorDetails vendorDetails = createVendorDetails(record);
+            vendorDetails.setPartnerUserID(partnerUserID);
+            vendorDetailsList.add(vendorDetails);
+        });
+        List<VendorDetails> savedVendorDetails = vendorDetailsRepository.saveAll(vendorDetailsList);
+        return vendorDetailsList;
+    }
+
+    private VendorDetails createVendorDetails(String[] record) {
+        VendorDetails vendorDetails = new VendorDetails();
+        vendorDetails.setVendorName(record[0]);
+        vendorDetails.setAmount(new BigDecimal(record[1]));
+        vendorDetails.setCreatedAt(LocalDate.parse(record[2]));
+        vendorDetails.setReceiptID(record[3]);
+        vendorDetails.setReceiptFilename(record[4]);
+        vendorDetails.setReceiptID(record[5]);
+        vendorDetails.setCount(record[6]);
+        vendorDetails.setAttendees(record[7]);
+        return vendorDetails;
+    }
+
 
 }

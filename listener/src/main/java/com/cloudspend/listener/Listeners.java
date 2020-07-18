@@ -46,5 +46,27 @@ public class Listeners {
             throw e;
         }
     }
+        @KafkaListener(
+            topics = "${cloudkarafka.download_reports}"
+    )
+    public void downloadReportsListener(String reportId) throws Exception {
+        try {
+            LOGGER.info(String.format(" downloadReportsListener for report id %s ", reportId));
+            Optional<ExpensifyReports> expensifyReports = expensifyReportsRepository.findById(reportId);
+            Preconditions.checkArgument(expensifyReports.isPresent(), "no report found with Id :" + reportId);
+            ExpensifyReports report = expensifyReports.get();
+            Optional<ExpensifyUsers> usersOptional = expensifyUsersRepository.findByPartnerUserID(report.getPartnerUserID());
+            Preconditions.checkArgument(usersOptional.isPresent(), "no user found with partnerID :" + report.getPartnerUserID());
+            ExpensifyUsers user = usersOptional.get();
+            String status = expensifyService.downloadReport(report.getFileName(),user.getPartnerUserID(), user.getPartnerUserSecret());
+            report.setStatus(ReportEnum.valueOf(status));
+            ExpensifyReports savedReport = expensifyReportsRepository.save(report);
+            LOGGER.info("Successfully saved report : {}", savedReport);
+        } catch (Exception e) {
+            LOGGER.error("Exception caught in initiating credit transfer of bpay.." + e.getMessage(), e);
+
+            throw e;
+        }
+    }
 
 }
