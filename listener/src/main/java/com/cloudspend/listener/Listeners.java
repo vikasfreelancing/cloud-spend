@@ -42,7 +42,7 @@ public class Listeners {
             ExpensifyReports savedReport = expensifyReportsRepository.save(expensifyReports);
             LOGGER.info("Successfully saved report : {}", savedReport);
         } catch (Exception e) {
-            LOGGER.error("Exception caught in initiating credit transfer of bpay.." + e.getMessage(), e);
+            LOGGER.error("Exception caught." + e.getMessage(), e);
             throw e;
         }
     }
@@ -63,7 +63,7 @@ public class Listeners {
             ExpensifyReports savedReport = expensifyReportsRepository.save(report);
             LOGGER.info("Successfully saved report : {}", savedReport);
         } catch (Exception e) {
-            LOGGER.error("Exception caught in initiating credit transfer of bpay.." + e.getMessage(), e);
+            LOGGER.error("Exception caught " + e.getMessage(), e);
 
             throw e;
         }
