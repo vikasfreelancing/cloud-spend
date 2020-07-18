@@ -18,6 +18,10 @@
 			<artifactId>commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.cloudspend</groupId>
+			<artifactId>dao</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -41,7 +45,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
-					<mainClass>com.paytm.billpay.schedular.SchedulerApp</mainClass>
+					<mainClass>com.cloudspend.schedular.SchedulerApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

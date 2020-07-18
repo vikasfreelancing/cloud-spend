@@ -23,6 +23,7 @@
 			<groupId>com.cloudspend</groupId>
 			<artifactId>commons</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -47,7 +48,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
-					<mainClass>com.paytm.billpay.web.CloudSpendApplication</mainClass>
+					<mainClass>com.cloudspend.web.CloudSpendApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -22,6 +22,14 @@
 			<artifactId>commons</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>com.cloudspend</groupId>
+			<artifactId>dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudspend</groupId>
+			<artifactId>cloud-spend-integration</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
