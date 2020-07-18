@@ -21,7 +21,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.cloudspend</groupId>
-			<artifactId>commons</artifactId>
+			<artifactId>cloud-spend-service</artifactId>
 		</dependency>
 
 		<dependency>

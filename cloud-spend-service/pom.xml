@@ -41,6 +41,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.cloudspend</groupId>
+			<artifactId>schedular</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudspend</groupId>
+			<artifactId>listener</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.cloudspend</groupId>
 			<artifactId>cloud-spend-integration</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>

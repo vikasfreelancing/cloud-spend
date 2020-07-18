@@ -15,6 +15,7 @@ import java.util.List;
 public class VendorDetails {
     @Id
     private String id;
+    private String partnerUserID;
     private String vendorName;
     private BigDecimal amount;
     private LocalDateTime createdAt;

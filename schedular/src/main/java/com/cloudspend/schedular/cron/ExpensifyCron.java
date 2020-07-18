@@ -1,6 +1,4 @@
 package com.cloudspend.schedular.cron;
-
-import com.cloudspend.commons.producers.MessageProducer;
 import com.cloudspend.dao.ReportEnum;
 import com.cloudspend.dao.entity.ExpensifyReports;
 import com.cloudspend.dao.entity.ExpensifyUsers;
@@ -11,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,9 +18,12 @@ import java.util.List;
 @Component
 public class ExpensifyCron {
     private final static Logger LOGGER = LoggerFactory.getLogger(ExpensifyCron.class);
-    @Autowired
-    @Qualifier("highThroughtputKafkaProducer")
-    MessageProducer<String, String> kafkaPushService;
+
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    ExpensifyCron(KafkaTemplate<String, String> kafkaTemplate) {
+        this.kafkaTemplate = kafkaTemplate;
+    }
     @Autowired
     ExpensifyUsersRepository expensifyUsersRepository;
     @Autowired
@@ -38,7 +40,7 @@ public class ExpensifyCron {
             List<ExpensifyUsers> users = expensifyUsersRepository.findAll();
             LOGGER.info("Fetched Users : {}", users);
             users.forEach(user -> {
-                kafkaPushService.sendMessage(generateReporsKafkaTopic, user.getId());
+                kafkaTemplate.send(generateReporsKafkaTopic, user.getId());
             });
             Thread.sleep(1000 * 60);
         } catch (Exception e) {
@@ -51,8 +53,9 @@ public class ExpensifyCron {
         try {
             LOGGER.info("CRON >> Processing fetching reports to download");
             List<ExpensifyReports> reports = expensifyReportsRepository.findByStatus(ReportEnum.PENDING);
+            LOGGER.info("Fetched reports:{}",reports);
             reports.forEach(report -> {
-                kafkaPushService.sendMessage(downlaodReporsKafkaTopic, report.getId());
+                kafkaTemplate.send(downlaodReporsKafkaTopic, report.getId());
             });
             Thread.sleep(1000 * 60);
         } catch (Exception e) {
